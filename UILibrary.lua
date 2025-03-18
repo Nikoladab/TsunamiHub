@@ -4007,50 +4007,25 @@ function library:init()
                             end
                             bind.callback(false);
                         end
-                        local keyName = 'NONE'
+                                      local keyName = 'NONE'
                         self.bind = (keybind and keybind) or keybind or self.bind
-                        
                         if self.bind == Enum.KeyCode.Backspace then
-                            self.bind = 'none'
-                        elseif typeof(self.bind) == "EnumItem" then
-                            keyName = keyNames[self.bind] or self.bind.Name or tostring(self.bind)
+                            self.bind = 'none';
                         else
-                            keyName = 'NONE'
+                            keyName = keyNames[keybind] or keybind.Name or keybind
                         end
-                        
-                        -- Ensure keycallback handles 'none' value properly
-                        if self.bind ~= 'none' then
-                            self.keycallback(self.bind)
-                        else
-                            self.keycallback(nil)  -- Safely call with nil or handle it appropriately
-                        end
-                        
-                        self:SetKeyText(keyName:upper())
-                        
-                        -- Ensure self.objects are valid
-                        if self.objects.keyText then
-                            local textWidth = self.objects.keyText.TextBounds and self.objects.keyText.TextBounds.X or 100  -- Default width
-                            self.objects.keyText.Position = newUDim2(1, -textWidth, 0, 2)
-                        end
-                        
-                        -- Indicator value handling
-                        self.indicatorValue:SetKey((self.text == nil or self.text == '') and (self.flag == nil and 'unknown' or self.flag) or self.text)
-                        self.indicatorValue:SetValue('[' .. keyName:upper() .. ']')
-                        
-                        -- Ensure the color theme is valid
-                        if self.objects.holder then
-                            self.objects.keyText.ThemeColor = self.objects.holder.Hover and 'Accent' or 'Option Text 3'
-                        end
-                        
-                        -- Set Key Text Function
-                        function bind:SetKeyText(str)
-                            str = tostring(str)
-                            self.objects.keyText.Text = '[' .. str .. ']'
-                        
-                            -- Handle text bounds safely
-                            local textWidth = self.objects.keyText.TextBounds and self.objects.keyText.TextBounds.X or 100  -- Default width
-                            self.objects.keyText.Position = newUDim2(1, -textWidth, 0, 2)
-                        end
+                        self.keycallback(self.bind);
+                        self:SetKeyText(keyName:upper());
+                        self.indicatorValue:SetKey((self.text == nil or self.text == '') and (self.flag == nil and 'unknown' or self.flag) or self.text); -- this is so dumb
+                        self.indicatorValue:SetValue('['..keyName:upper()..']');
+                        self.objects.keyText.ThemeColor = self.objects.holder.Hover and 'Accent' or 'Option Text 3';
+                    end
+
+                    function bind:SetKeyText(str)
+                        str = tostring(str);
+                        self.objects.keyText.Text = '['..str..']';
+                        self.objects.keyText.Position = newUDim2(1,-self.objects.keyText.TextBounds.X, 0, 2);
+                    end
 
                     utility:Connection(inputservice.InputBegan, function(inp)
                         if inputservice:GetFocusedTextBox() then
